@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "projects": {
+    "update-app": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.json",
+            "index": "src/index.html",
+            "styles": ["src/styles.css"],
+            "assets": [{ "glob": "**/*", "input": "public" }],
+            "outputPath": "dist/update-app"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "all",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "2MB"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": { "buildTarget": "update-app:build" }
+        }
+      }
+    }
+  }
+}

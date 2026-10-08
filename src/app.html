@@ -1,0 +1,495 @@
+@if (!dashboard()) {
+<div class="login-page">
+  <header class="login-header">
+    <a class="brand" href="/"
+      ><span class="brand-mark"><lucide-icon [img]="icons.CheckCheck" /></span
+      >update<span class="brand-dot">.</span></a
+    ><span class="header-note">Un poco más juntos.</span>
+  </header>
+  <main class="login-main">
+    <div class="login-photo">
+      <div class="photo-caption">
+        <span class="eyebrow">LO BUENO SE COMPARTE</span>
+        <h1>Hagamos espacio <br />para compartir.</h1>
+        <p>
+          Cenas de viernes. Planes de fin de semana.<br />Cada quien aporta algo.
+        </p>
+      </div>
+      <span class="photo-credit">Menos pendientes. Más tiempo juntos.</span>
+    </div>
+    <section class="login-form">
+      <div class="login-form-inner">
+        <span class="small-mark"
+          ><lucide-icon [img]="icons.ShoppingBag" [size]="25" /></span
+        ><span class="eyebrow green">ORGANICÉMONOS</span>
+        <h2>Te damos la bienvenida a Update.</h2>
+        <p class="intro">
+          Tu gente. Tus planes.<br />Un lugar para organizarlo todo.
+        </p>
+        <button
+          class="google-button"
+          (click)="login()"
+          [disabled]="busy() || !data.ready()"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt=""
+            width="20"
+            height="20"
+          />{{busy() ? 'Iniciando sesión...' : 'Continuar con Google'}}<lucide-icon
+            [img]="icons.ArrowUpRight"
+            [size]="17"
+          />
+        </button>
+        <p class="login-note">
+          <lucide-icon [img]="icons.LockKeyhole" [size]="14" />Tu cuenta es privada. Tú decides qué compartir.
+        </p>
+        <div class="preview-divider"><span>Conoce Update</span></div>
+        <button class="text-button preview" (click)="preview()">
+          Explorar un grupo de ejemplo<lucide-icon
+            [img]="icons.ArrowUpRight"
+            [size]="16"
+          />
+        </button>
+      </div>
+      <footer class="login-footer">Un plan compartido. Menos pendientes.</footer>
+    </section>
+  </main>
+</div>
+} @else {
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="/"
+      ><span class="brand-mark"><lucide-icon [img]="icons.CheckCheck" /></span
+      >update<span class="brand-dot">.</span></a
+    >
+    <div class="workspace-label">TU ESPACIO</div>
+    <a class="nav-item active" [href]="demo() ? '/?demo=1' : '/'"
+      ><lucide-icon [img]="icons.LayoutGrid" [size]="18" />Panel<lucide-icon
+        class="nav-arrow"
+        [img]="icons.ChevronRight"
+        [size]="15"
+    /></a>
+    @if (!sharedId()) {
+    <div class="group-list-label">
+      <span>GRUPOS</span
+      ><button
+        class="icon-button"
+        title="Crear grupo"
+        (click)="openGroup()"
+      >
+        <lucide-icon [img]="icons.Plus" [size]="17" />
+      </button>
+    </div>
+    <nav class="group-list" aria-label="Grupos">
+      @for(g of groups();track g.id){<button
+        [class.selected]="group()?.id===g.id"
+        (click)="select(g)"
+      >
+        <span class="group-dot"></span><span>{{g.title}}</span></button
+      >}
+    </nav>
+    }
+    <div class="sidebar-bottom">
+      <div class="together-note">
+        <lucide-icon [img]="icons.Users" [size]="20" />
+        <p>
+          Un aporte de cada quien.<br /><strong>Algo bueno, entre todos.</strong>
+        </p>
+      </div>
+      <div class="account">
+        <span class="avatar"
+          >{{demo() ? 'JD' : (data.user()?.displayName ||
+          'Invitado').slice(0,1)}}</span
+        >
+        <div>
+          <strong
+            >{{demo() ? 'Jamie Davis' : (data.user()?.displayName ||
+            'Invitado')}}</strong
+          ><small
+            >{{demo() ? 'Espacio de ejemplo' : (data.user() ? 'Espacio personal'
+            : 'Vista pública')}}</small
+          >
+        </div>
+        @if(data.user()){<button
+          class="icon-button"
+          title="Cerrar sesión"
+          (click)="logout()"
+        >
+          <lucide-icon [img]="icons.LogOut" [size]="18" /></button
+        >}@else{<a class="icon-button" href="/" title="Ir al inicio de sesión"
+          ><lucide-icon [img]="icons.ArrowUpRight" [size]="18" /></a
+        >}
+      </div>
+    </div>
+  </aside>
+  <div class="main-shell">
+    <header class="topbar">
+      <span
+        >Espacio <span class="breadcrumb-divider">/</span>
+        <strong>Panel</strong></span
+      ><span class="topbar-right"
+        ><span class="status-dot"></span>{{demo() ? 'Vista de ejemplo' : sharedId()
+        ? 'Compartido contigo' : 'Tu espacio'}}</span
+      >
+    </header>
+    <main class="dashboard">
+      @if(demo()){
+      <div class="demo-banner">
+        <span>Espacio de ejemplo · Los cambios se guardan en este navegador.</span
+        ><a href="/"
+          >Inicia sesión para crear tu grupo<lucide-icon
+            [img]="icons.ArrowUpRight"
+            [size]="14"
+        /></a>
+      </div>
+      }
+      <div class="page-heading">
+        <div>
+          <span class="eyebrow green">UN POCO MÁS JUNTOS</span>
+          <h1>
+            {{sharedId() ? 'Un plan compartido.' : 'Tus planes, en buena compañía.'}}
+          </h1>
+          <p>
+            {{sharedId() ? 'Todos al tanto.' : 'Organiza los detalles que nos reúnen.'}}
+          </p>
+        </div>
+        @if(!sharedId()){<button class="button primary" (click)="openGroup()">
+          <lucide-icon [img]="icons.Plus" [size]="18" />Crear grupo</button
+        >}
+      </div>
+      @if(loading() && !group()){
+      <div class="empty-state" role="status">
+        <div class="spinner"></div>
+        <h2>Preparando tus planes...</h2>
+      </div>
+      } @else if(missing()){
+      <div class="empty-state">
+        <lucide-icon [img]="icons.Link" [size]="32" />
+        <h2>Este grupo no está disponible.</h2>
+        <p>Confirma el enlace con quien lo compartió.</p>
+        <a class="button secondary" href="/">Ir a Update</a>
+      </div>
+      } @else if(group(); as g){
+      <section class="group-overview">
+        <div class="group-cover">
+          <div class="cover-label">
+            <lucide-icon [img]="icons.Users" [size]="16" />MEJOR JUNTOS
+          </div>
+        </div>
+        <div class="group-heading">
+          <div class="group-title">
+            <div class="group-symbol">
+              <lucide-icon [img]="icons.ShoppingBag" [size]="25" />
+            </div>
+            <div>
+              <div class="title-line">
+                <h2>{{g.title}}</h2>
+                <span class="badge"
+                  ><lucide-icon [img]="icons.Globe" [size]="12" />Público</span
+                >
+              </div>
+              <p>{{g.description || 'Un pequeño aporte de cada quien.'}}</p>
+            </div>
+          </div>
+          <button class="button secondary" (click)="share()">
+            <lucide-icon [img]="icons.Link" [size]="16" />Compartir grupo
+          </button>
+        </div>
+        <div class="stats">
+          <div>
+            <span>Total previsto</span
+            ><strong>{{total() | currency:'USD'}}</strong>
+          </div>
+          <div>
+            <span>Total pagado</span
+            ><strong class="green">{{bought() | currency:'USD'}}</strong>
+          </div>
+          <div>
+            <span>Participantes</span
+            ><strong>{{people()}}<span class="stat-unit">personas</span></strong>
+          </div>
+          <div class="progress-stat">
+            <span
+              >Progreso de la lista
+              <b>{{completed()}} / {{items().length}}</b></span
+            >
+            <div class="progress-track">
+              <div
+                [style.width.%]="items().length ? completed()/items().length*100 : 0"
+              ></div>
+            </div>
+            <small
+              >{{items().length && completed()===items().length ? 'Todo listo. ¡A disfrutar juntos!' : (items().length-completed()) + '
+              por pagar'}}</small
+            >
+          </div>
+        </div>
+      </section>
+      <section class="checklist">
+        <div class="section-heading">
+          <div>
+            <h2>Lista de pagos <span class="count">{{items().length}}</span></h2>
+            <p>
+              {{owner() ? 'Cada persona y lo que va a pagar.' : 'Sigue los preparativos del grupo.'}}
+            </p>
+          </div>
+          @if(owner()){<button class="button primary" (click)="openItem()">
+            <lucide-icon [img]="icons.Plus" [size]="17" />Agregar pago</button
+          >}@else{<span class="read-only"
+            ><lucide-icon [img]="icons.LockKeyhole" [size]="14" />Solo lectura</span
+          >}
+        </div>
+        <div class="list-toolbar">
+          <div class="tabs" aria-label="Filtrar pagos">
+            <button
+              [class.active]="filter()==='all'"
+              (click)="filter.set('all')"
+            >
+              Todos</button
+            ><button
+              [class.active]="filter()==='pending'"
+              (click)="filter.set('pending')"
+            >
+              Por pagar <span>{{items().length-completed()}}</span></button
+            ><button
+              [class.active]="filter()==='done'"
+              (click)="filter.set('done')"
+            >
+              Pagado <span>{{completed()}}</span>
+            </button>
+          </div>
+          <span class="currency-label">Montos en USD</span>
+        </div>
+        <div class="items-table">
+          <div class="table-head">
+            <span>PERSONA</span><span>QUÉ VA A PAGAR</span
+            ><span>MONTO</span><span>ESTADO</span><span></span>
+          </div>
+          @if(loading()){
+          <div class="list-empty" role="status">Cargando pagos...</div>
+          } @else {@for(item of visible();track item.id){
+          <div class="item-row" [class.is-done]="item.done">
+            <div class="person-cell">
+              <button
+                class="check-box"
+                [class.checked]="item.done"
+                [disabled]="!owner() || busy()"
+                [attr.aria-label]="(item.done ? 'Marcar como pendiente: ' : 'Marcar como pagado: ') + item.purchase"
+                [attr.aria-pressed]="item.done"
+                (click)="toggle(item)"
+              >
+                @if(item.done){<lucide-icon
+                  [img]="icons.Check"
+                  [size]="13"
+                />}</button
+              ><span
+                class="person-avatar"
+                [class.rose]="$index%3===1"
+                [class.blue]="$index%3===2"
+                >{{item.name.slice(0,1)}}</span
+              ><strong>{{item.name}}</strong>
+            </div>
+            <span class="purchase-cell">{{item.purchase}}</span
+            ><strong class="amount-cell"
+              >{{item.amount | currency:'USD'}}</strong
+            ><span class="item-status" [class.purchased]="item.done"
+              ><span></span>{{item.done ? 'Pagado' : 'Por pagar'}}</span
+            >
+            <div class="row-actions">
+              @if(owner()){<button
+                class="icon-button"
+                [attr.title]="'Editar '+item.purchase"
+                (click)="openItem(item)"
+              >
+                <lucide-icon [img]="icons.Pencil" [size]="15" /></button
+              ><button
+                class="icon-button delete"
+                [attr.title]="'Eliminar '+item.purchase"
+                (click)="editing=item;modal.set('delete')"
+              >
+                <lucide-icon [img]="icons.Trash2" [size]="15" /></button
+              >}
+            </div>
+          </div>
+          }@empty{
+          <div class="list-empty">
+            <lucide-icon [img]="icons.ShoppingBag" [size]="25" />
+            <h3>
+              {{items().length ? 'Todavía no hay pagos aquí.' : 'Comienza con el primer pago.'}}
+            </h3>
+            <p>
+              {{items().length ? 'Prueba otro filtro para ver más pagos.' :
+              owner() ? 'Agrega una persona y lo que va a pagar.' : 'La persona que administra el grupo aún no ha agregado pagos.'}}
+            </p>
+            @if(owner() && !items().length){<button
+              class="text-button"
+              (click)="openItem()"
+            >
+              Agregar el primer pago<lucide-icon
+                [img]="icons.Plus"
+                [size]="16"
+              /></button
+            >}
+          </div>
+          }}
+        </div>
+        <div class="list-footer">
+          <span
+            ><lucide-icon [img]="icons.Globe" [size]="14" />Cualquier persona con el enlace puede ver este grupo.</span
+          ><span>Solo quien creó el grupo puede hacer cambios.</span>
+        </div>
+      </section>
+      } @else if(!error()) {
+      <div class="empty-state">
+        <span class="small-mark"
+          ><lucide-icon [img]="icons.ShoppingBag" [size]="30"
+        /></span>
+        <h2>Tu próximo plan empieza aquí.</h2>
+        <p>Crea un grupo y organiza todos los detalles.</p>
+        <button class="button primary" (click)="openGroup()">
+          <lucide-icon [img]="icons.Plus" [size]="17" />Crear grupo
+        </button>
+      </div>
+      }
+      <footer class="dashboard-footer">
+        <span class="mini-brand">update.</span
+        ><span>Para todo lo que hacemos juntos.</span>
+      </footer>
+    </main>
+  </div>
+</div>
+} @if(error()){
+<div class="error-banner" role="alert">
+  <span>{{error()}}</span
+  ><button class="icon-button" title="Cerrar mensaje de error" (click)="error.set('')">
+    <lucide-icon [img]="icons.X" [size]="18" />
+  </button>
+</div>
+} @if(toast()){
+<div class="toast" role="status">
+  <lucide-icon [img]="icons.Check" [size]="17" />{{toast()}}
+</div>
+} @if(modal(); as m){
+<div class="modal-backdrop" (click)="close()">
+  <section
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      class="icon-button modal-close"
+      title="Cerrar ventana"
+      (click)="close()"
+      [disabled]="busy()"
+    >
+      <lucide-icon [img]="icons.X" [size]="20" />
+    </button>
+    @if(m==='group'){<span class="small-mark"
+      ><lucide-icon [img]="icons.Users" [size]="23"
+    /></span>
+    <h2 id="modal-title">Crear grupo</h2>
+    <p>Un nuevo plan con tu gente.</p>
+    <form (ngSubmit)="create()" #groupForm="ngForm">
+      <label
+        >Nombre del grupo<input
+          autofocus
+          name="title"
+          [(ngModel)]="title"
+          required
+          maxlength="100"
+          placeholder="Ej. Cena del viernes" /></label
+      ><label
+        >Descripción <span>(opcional)</span
+        ><textarea
+          name="description"
+          [(ngModel)]="description"
+          maxlength="400"
+          rows="3"
+          placeholder="¿Cuál es el plan?"
+        ></textarea>
+      </label>
+      <div class="form-note">
+        <lucide-icon [img]="icons.Globe" [size]="16" />Cualquier persona con el enlace puede ver los nombres, los pagos y los montos.
+      </div>
+      <button class="button primary full" [disabled]="busy() || !title.trim()">
+        {{busy() ? 'Creando...' : 'Crear grupo'}}
+      </button>
+    </form>
+    } @if(m==='item'){
+    <h2 id="modal-title">{{editing ? 'Editar pago' : 'Agregar un pago'}}</h2>
+    <p>¿Quién paga qué?</p>
+    <form (ngSubmit)="save()" #itemForm="ngForm">
+      <label
+        >Nombre<input
+          autofocus
+          name="name"
+          [(ngModel)]="name"
+          required
+          maxlength="100"
+          placeholder="Nombre de la persona" /></label
+      ><label
+        >¿Qué va a pagar?<input
+          name="purchase"
+          [(ngModel)]="purchase"
+          required
+          maxlength="200"
+          placeholder="Ej. Pasta fresca y pan" /></label
+      ><label
+        >Monto (USD)
+        <div class="money-input">
+          <span>$</span
+          ><input
+            name="amount"
+            type="number"
+            [(ngModel)]="amount"
+            required
+            min="0"
+            max="1000000"
+            step="0.01"
+            placeholder="0.00"
+          /></div></label
+      ><button
+        class="button primary full"
+        [disabled]="busy() || itemForm.invalid || !name.trim() || !purchase.trim()"
+      >
+        {{busy() ? 'Guardando...' : editing ? 'Guardar cambios' : 'Agregar pago'}}
+      </button>
+    </form>
+    } @if(m==='delete'){
+    <h2 id="modal-title">¿Eliminar este pago?</h2>
+    <p>“{{editing?.purchase}}” se eliminará de este grupo.</p>
+    <div class="modal-actions">
+      <button class="button secondary" (click)="close()" [disabled]="busy()">
+        Cancelar</button
+      ><button class="button danger" (click)="remove()" [disabled]="busy()">
+        {{busy() ? 'Eliminando...' : 'Eliminar pago'}}
+      </button>
+    </div>
+    } @if(m==='share'){<span class="small-mark"
+      ><lucide-icon [img]="icons.Link" [size]="24"
+    /></span>
+    <h2 id="modal-title">Los buenos planes se comparten.</h2>
+    @if(demo()){
+    <p>
+      Este ejemplo se guarda solo en tu navegador. Inicia sesión y crea un grupo para obtener un enlace público.
+    </p>
+    <a href="/" class="button primary full"
+      >Iniciar sesión<lucide-icon [img]="icons.ArrowUpRight" [size]="17" /></a
+    >}@else{
+    <p>
+      Cualquier persona con este enlace puede ver {{group()?.title}}. Solo quien creó el grupo puede editarlo.
+    </p>
+    <label
+      >Enlace del grupo<input
+        readonly
+        [value]="shareUrl"
+        (focus)="$any($event.target).select()" /></label
+    ><button class="button primary full" (click)="copy()" [disabled]="busy()">
+      <lucide-icon [img]="icons.Copy" [size]="17" />Copiar enlace</button
+    >}}
+  </section>
+</div>
+}

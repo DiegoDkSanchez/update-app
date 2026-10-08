@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.angular/
+.firebase/
+playwright-report/
+test-results/
+*-debug.log
