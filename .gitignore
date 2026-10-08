@@ -5,3 +5,4 @@ dist/
 playwright-report/
 test-results/
 *-debug.log
+src/firebase.config.ts
